@@ -2,13 +2,13 @@ import { useState } from 'react';
 import styles from './index.module.css';
 
 const DIRECTIONS = [
-  [0, -1],
-  [1, -1],
-  [1, 0],
-  [1, 1],
   [0, 1],
-  [-1, 1],
+  [0, -1],
+  [1, 0],
   [-1, 0],
+  [1, 1],
+  [-1, 1],
+  [1, -1],
   [-1, -1],
 ];
 
@@ -16,36 +16,28 @@ const getPuttablePositions = (board: number[][], x: number, y: number, turn: num
   if (board[y][x] === 1 || board[y][x] === 2) {
     return false;
   }
-
   for (const direction of DIRECTIONS) {
     const [dx, dy] = direction;
-    let i = 1;
-    let foundOpponent = false;
-
+    let t = 1;
+    let searchOpponent = false;
     while (true) {
-      const nx = x + i * dx;
-      const ny = y + i * dy;
-
+      const nx = x + dx * t;
+      const ny = y + dy * t;
       if (board[ny] === undefined || board[ny][nx] === undefined) break;
-
       if (board[ny][nx] === 0 || board[ny][nx] === 3) break;
-
       if (board[ny][nx] === turn) {
-        if (foundOpponent) {
+        if (searchOpponent) {
           return true;
         } else {
           break;
         }
       }
-
       if (board[ny][nx] === 3 - turn) {
-        foundOpponent = true;
+        searchOpponent = true;
       }
-
-      i++;
+      t++;
     }
   }
-
   return false;
 };
 
@@ -61,67 +53,51 @@ const Home = () => {
     [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
 
-  const [turn, setturn] = useState(1);
+  const [turn, setTurn] = useState(1);
 
   const handleOnClick = (x: number, y: number) => {
     if (board[y][x] !== 3) {
       return;
     }
 
-    const newBoard = structuredClone(board);
+    const newboard = structuredClone(board);
 
     for (const direction of DIRECTIONS) {
       const [dx, dy] = direction;
-      let i = 1;
+      let t = 1;
 
       while (true) {
-        const nx = x + i * dx;
-        const ny = y + i * dy;
+        const nx = x + dx * t;
+        const ny = y + dy * t;
 
-        if (newBoard[ny] === undefined || newBoard[ny][nx] === undefined) break;
+        if (newboard[ny] === undefined || newboard[ny][nx] === undefined) break;
+        if (newboard[ny][nx] === 0 || newboard[ny][nx] === 3) break;
 
-        if (newBoard[ny][nx] === 0 || newBoard[ny][nx] === 3) break;
-
-        if (newBoard[ny][nx] === turn) {
-          for (let k = 1; k < i; k++) {
-            newBoard[y + k * dy][x + k * dx] = turn;
+        if (newboard[ny][nx] === turn) {
+          for (let k = 0; k < t; k++) {
+            newboard[y + dy * k][x + dx * k] = turn;
           }
           break;
         }
 
-        i++;
+        t++;
       }
     }
 
-    newBoard[y][x] = turn;
+    newboard[y][x] = turn;
 
-    // 次のターンの石を置ける場所を更新
     for (let k = 0; k < 8; k++) {
       for (let i = 0; i < 8; i++) {
-        if (newBoard[k][i] === 3) {
-          newBoard[k][i] = 0; // 前のターンの候補をリセット
+        if (newboard[i][k] === 3) {
+          newboard[i][k] = 0;
         }
-        if (getPuttablePositions(newBoard, i, k, 3 - turn)) {
-          newBoard[k][i] = 3; // 次のターンの候補を設定
-        }
-      }
-    }
-
-    // ボードとターンを更新
-    setBoard(newBoard);
-    setturn(3 - turn);
-  };
-
-  const getStonecount = (color: 1 | 2) => {
-    let result = 0;
-    for (const row of board) {
-      for (const cellColor of row) {
-        if (cellColor === color) {
-          result++;
+        if (getPuttablePositions(newboard, k, i, 3 - turn)) {
+          newboard[i][k] = 3;
         }
       }
     }
-    return result;
+    setBoard(newboard);
+    setTurn(3 - turn);
   };
 
   return (
@@ -130,8 +106,8 @@ const Home = () => {
         {board.map((row, y) =>
           row.map((color, x) => (
             <div
-              key={`${x}-${y}`}
               className={styles.cell}
+              key={`${x}-${y}`}
               onClick={() => {
                 handleOnClick(x, y);
               }}
@@ -149,28 +125,8 @@ const Home = () => {
           )),
         )}
       </div>
-
-      <div className={styles.whichturn}>
-        <span
-          className={`${styles.turnText} ${
-            turn === 1 ? styles.black : turn === 2 ? styles.white : ''
-          }`}
-        >
-          {turn === 1 ? '黒のターン' : '白のターン'}
-        </span>
-      </div>
-
-      <div className={styles.scoreBoard}>
-        <div className={styles.scoreItem}>
-          <span className={styles.stoneIcon} style={{ backgroundColor: 'black' }} />
-          <span className={styles.scoreText}>黒の個数: {getStonecount(1)}</span>
-        </div>
-        <div className={styles.scoreItem}>
-          <span className={styles.stoneIcon} style={{ backgroundColor: 'white' }} />
-          <span className={styles.scoreText}>白の個数: {getStonecount(2)}</span>
-        </div>
-      </div>
     </div>
   );
 };
+
 export default Home;

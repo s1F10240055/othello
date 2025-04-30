@@ -13,7 +13,7 @@
   align-items: center;
   justify-content: center;
   width: 12.5%;
-  border: solid 1px black;
+  border: solid 1px #000;
 }
 
 .board {
@@ -21,74 +21,12 @@
   flex-wrap: wrap;
   width: 40vw;
   height: 40vw;
-  background-color: #01a743;
+  background-color: green;
 }
 
 .stone {
-  width: 70%;
-  height: 70%;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  transition: all 0.3s ease-in-out;
-}
-
-.scoreBoard {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  width: 300px;
-  padding: 20px;
-  margin: 10 auto;
-  font-family: Arial, sans-serif;
-  font-size: 18px;
-  background-color: #f0f0f0;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgb(0 0 0 / 10%);
-}
-
-.scoreItem {
-  display: flex;
-  align-items: center;
-}
-
-.stoneIcon {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-  border-radius: 50%;
-}
-
-.scoreText {
-  font-weight: bold;
-  color: #333;
-}
-
-.whichturn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px 0;
-  font-family: Arial, sans-serif;
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-}
-
-.turnText {
-  padding: 10px 20px;
-  border-radius: 10px;
-  background-color: #f0f0f0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease-in-out;
-}
-
-.turnText.black {
-  background-color: #000;
-  color: #fff;
-}
-
-.turnText.white {
-  background-color: #fff;
-  color: #000;
-  border: 1px solid #000;
+  transition: all 0.3s ease;
 }
